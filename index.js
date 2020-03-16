@@ -72,12 +72,13 @@ viewEmployeeByManager = (connection) => {
 
 updateEmployeeManager = (connection) => {
 
-    connection.query("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name FROM employee AS e", (err, res) => {
+    connection.query("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e", (err, res) => {
         if(err) throw err;
 
         let e_list = [];
 
-        res.forEach(e => e_list.push(e.e_name));
+        res.forEach(e => e_list.push({id: e.e_id, name: e.e_name}));
+
 
         let employeeToChange = "";
 
@@ -90,12 +91,12 @@ updateEmployeeManager = (connection) => {
 
             employeeToChange = res.selected_employee;
 
-            connection.query("SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null", (err, res) => {
+            connection.query("SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null", (err, res) => {
                 if(err) throw err;
 
                 let m_list = [];
 
-                res.forEach(e => m_list.push(e.m_name));
+                res.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
 
                 inquirer.prompt({
                     type: "list",
@@ -103,6 +104,17 @@ updateEmployeeManager = (connection) => {
                     message: "Which manager would you like to assign them to?",
                     name: "new_manager"
                 }).then(res => {
+
+                    let new_manager;
+                    
+                    m_list.forEach(e => {
+                        if(e.name == res.new_manager){
+                            new_manager = e;
+                        }
+                    });
+
+
+                   // connection.query(`UPDATE employee AS e SET e.manager_id = ${5}`)
 
                 });
             });
