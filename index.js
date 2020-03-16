@@ -39,6 +39,9 @@ handleSelection = (userChoice, connection) => {
         case "View All Employees":
             viewAllEmployees(connection);
             break;
+        case "View All Employees by Department":
+            viewEmployeeByDepartment(connection);
+            break;
         default:
             console.log("Invalid Selection");
     }
@@ -49,10 +52,17 @@ viewAllEmployees = (connection) => {
     connection.query("SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, role.title AS title, department.name AS department, role.salary AS salary, CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS e INNER JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id LEFT JOIN employee AS m ON e.manager_id = m.id", (err,res) => {
         if(err) throw err;
 
-        console.log(res);
+        console.table(res);
     
         connection.end();
         startQuestions();
+    });
+}
+
+viewEmployeeByDepartment = (connection) => {
+    connection.query("", (err, res) => {
+        if(err) throw err;  
+
     });
 }
 
