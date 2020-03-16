@@ -54,16 +54,23 @@ viewAllEmployees = (connection) => {
 
         console.table(res);
     
-        connection.end();
-        startQuestions();
+        restartQuestions(connection);
     });
 }
 
 viewEmployeeByDepartment = (connection) => {
-    connection.query("", (err, res) => {
-        if(err) throw err;  
+    connection.query("SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, d.name AS department FROM employee AS e INNER JOIN role AS r ON e.role_id = r.id INNER JOIN department AS d ON r.department_id = d.id", (err, res) => {
+        if(err) throw err;
 
-    });
+        console.table(res);
+
+        restartQuestions(connection);
+    }); 
+}
+
+restartQuestions = (connection) =>{
+    connection.end();
+    startQuestions();
 }
 
 init = () => {
