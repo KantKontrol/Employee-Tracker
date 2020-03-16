@@ -27,9 +27,6 @@ CREATE TABLE employee (
     primary key (id)
 );
 
-SELECT department.id FROM department INNER JOIN role ON role.department_id=department.id;
-
-SELECT role.id FROM role INNER JOIN employee ON employee.role_id=role.id;
 
 USE employee_trackerdb;
 
@@ -45,8 +42,12 @@ FROM employee AS e INNER JOIN role AS r ON e.role_id = r.id INNER JOIN departmen
 SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.first_name, ' ', m.last_name) AS m_name
 FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id;
 
-SELECT e.first_name AS e_firstname, e.last_name AS e_lastname,
- m.first_name AS m_firstname, m.last_name AS m_lastname
-FROM employee AS e INNER JOIN employee AS m
-ON e.manager_id = m.role_id;
+
+-- Add department
+
+-- Add role
+
+-- Add employee
+
+
 
