@@ -31,6 +31,11 @@ SELECT department.id FROM department INNER JOIN role ON role.department_id=depar
 
 SELECT role.id FROM role INNER JOIN employee ON employee.role_id=role.id;
 
+USE employee_trackerdb;
+
+SELECT e.id AS e_id, CONCAT(e.first_name, " ", e.last_name) AS e_name, role.title AS title, department.name AS department, role.salary AS salary, CONCAT(m.first_name, " ", m.last_name) AS m_name
+FROM employee AS e INNER JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id LEFT JOIN employee AS m ON e.manager_id = m.id;
+
 SELECT e.first_name AS e_firstname, e.last_name AS e_lastname,
  m.first_name AS m_firstname, m.last_name AS m_lastname
 FROM employee AS e INNER JOIN employee AS m

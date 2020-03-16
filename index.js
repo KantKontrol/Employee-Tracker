@@ -3,11 +3,11 @@ const mysql = require("mysql");
 
 setDBConnection = () => {
     return mysql.createConnection({
-        host: 'localhost',
+        host: "localhost",
         port: 3306,
-        root: 'nodeuser',
-        password: 'nodeuser',
-        database: 'employee_trackerdb'
+        user: "nodeuser",
+        password: "nodeuser",
+        database: "employee_trackerdb"
     });
 }
 
@@ -46,7 +46,14 @@ handleSelection = (userChoice, connection) => {
 }
 
 viewAllEmployees = (connection) => {
+    connection.query("SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, role.title AS title, department.name AS department, role.salary AS salary, CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS e INNER JOIN role ON e.role_id = role.id INNER JOIN department ON role.department_id = department.id LEFT JOIN employee AS m ON e.manager_id = m.id", (err,res) => {
+        if(err) throw err;
 
+        console.log(res);
+    
+        connection.end();
+        startQuestions();
+    });
 }
 
 init = () => {
