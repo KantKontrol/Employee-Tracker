@@ -16,7 +16,7 @@ startQuestions = () => {
 
     let connection = setDBConnection();
 
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager"];
+    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Update Employee Managers"];
 
     inquirer.prompt(
         {
@@ -45,6 +45,9 @@ handleSelection = (userChoice, connection) => {
         case "View All Employees by Manager":
             viewEmployeeByManager(connection);
             break;
+        case "Update Employee Managers":
+            updateEmployeeManager(connection);
+            break;
         default:
             console.log("Invalid Selection");
     }
@@ -65,6 +68,29 @@ viewEmployeeByManager = (connection) => {
 
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id";
     handleGetConnection(connection, query);
+}
+
+updateEmployeeManager = (connection) => {
+
+    connection.query("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name FROM employee AS e", (err, res) => {
+        if(err) throw err;
+
+        let e_list = [];
+
+        res.forEach(e => {
+            e_list.push(e.e_name);
+        });
+
+        inquirer.prompt({
+            type: "list",
+            choices: e_list,
+            message: "Which employee' manager would you like to change?",
+            name: "selected_employee"
+        }).then(res => {
+
+        });
+
+    });
 }
 
 handleGetConnection = (connection, query) => {
