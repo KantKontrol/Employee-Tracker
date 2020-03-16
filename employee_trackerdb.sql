@@ -41,6 +41,10 @@ FROM employee AS e INNER JOIN role ON e.role_id = role.id INNER JOIN department 
 SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, d.name AS department
 FROM employee AS e INNER JOIN role AS r ON e.role_id = r.id INNER JOIN department AS d ON r.department_id = d.id;
 
+-- Employee by manager
+SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.first_name, ' ', m.last_name) AS m_name
+FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id;
+
 SELECT e.first_name AS e_firstname, e.last_name AS e_lastname,
  m.first_name AS m_firstname, m.last_name AS m_lastname
 FROM employee AS e INNER JOIN employee AS m
