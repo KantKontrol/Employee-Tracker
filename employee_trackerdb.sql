@@ -47,6 +47,7 @@ FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id;
 -- Get employees that are managers
 SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null;
 
+SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, role.title FROM employee AS m LEFT JOIN role ON role.title = 'General Manager';
 
 -- update employees manager
 SELECT * FROM employee;

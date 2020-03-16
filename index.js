@@ -90,8 +90,8 @@ updateEmployeeManager = (connection) => {
         }).then(res => {
 
             employeeToChange = res.selected_employee;
-
-            connection.query("SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null", (err, res) => {
+            //change this to get manager by there title
+            connection.query(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}' `, (err, res) => {
                 if(err) throw err;
 
                 let m_list = [];
