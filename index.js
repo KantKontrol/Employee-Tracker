@@ -77,9 +77,7 @@ updateEmployeeManager = (connection) => {
 
         let e_list = [];
 
-        res.forEach(e => {
-            e_list.push(e.e_name);
-        });
+        res.forEach(e => e_list.push(e.e_name));
 
         let employeeToChange = "";
 
@@ -95,8 +93,19 @@ updateEmployeeManager = (connection) => {
             connection.query("SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null", (err, res) => {
                 if(err) throw err;
 
-                console.log(res);
-            })
+                let m_list = [];
+
+                res.forEach(e => m_list.push(e.m_name));
+
+                inquirer.prompt({
+                    type: "list",
+                    choices: m_list,
+                    message: "Which manager would you like to assign them to?",
+                    name: "new_manager"
+                }).then(res => {
+
+                });
+            });
 
         });
 
