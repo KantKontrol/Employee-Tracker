@@ -43,6 +43,9 @@ SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.
 FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id;
 
 
+-- Get employees that are managers
+SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE m.m_name is not null;
+
 -- Add department
 
 -- Add role

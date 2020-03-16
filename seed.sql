@@ -16,7 +16,8 @@ insert role(title, salary, department_id)  values ("General Manager", 80000.00, 
 
 truncate employee;
 insert employee(first_name, last_name, role_id) values ("Nicholas", "Derissio", 6);
+insert employee(first_name, last_name, role_id) values ("John", "Marston", 6);
 insert employee(first_name, last_name, role_id, manager_id) values ("John", "Doe", 1, 1);
-insert employee(first_name, last_name, role_id, manager_id) values ("Bill", "Mathison", 2, 1);
+insert employee(first_name, last_name, role_id, manager_id) values ("Bill", "Mathison", 2, 2);
 
 SELECT * FROM employee

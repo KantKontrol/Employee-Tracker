@@ -81,12 +81,22 @@ updateEmployeeManager = (connection) => {
             e_list.push(e.e_name);
         });
 
+        let employeeToChange = "";
+
         inquirer.prompt({
             type: "list",
             choices: e_list,
             message: "Which employee' manager would you like to change?",
             name: "selected_employee"
         }).then(res => {
+
+            employeeToChange = res.selected_employee;
+
+            connection.query("SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null", (err, res) => {
+                if(err) throw err;
+
+                console.log(res);
+            })
 
         });
 
