@@ -114,8 +114,11 @@ updateEmployeeManager = (connection) => {
                     });
 
 
-                   // connection.query(`UPDATE employee AS e SET e.manager_id = ${5}`)
-
+                    connection.query(`UPDATE employee AS e, employee AS m SET e.manager_id = m.id WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}' AND CONCAT(m.first_name, ' ', m.last_name) = '${new_manager.name}'`, (err,res) => {
+                        if(err) throw err;
+                        console.log("Manager updated!");
+                        viewAllEmployees(connection);
+                    });
                 });
             });
 

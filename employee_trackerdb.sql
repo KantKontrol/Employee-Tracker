@@ -29,6 +29,7 @@ CREATE TABLE employee (
 
 
 USE employee_trackerdb;
+SET SQL_SAFE_UPDATES = 0;
 
 -- All employees
 SELECT e.id AS e_id, CONCAT(e.first_name, " ", e.last_name) AS e_name, role.title AS title, department.name AS department, role.salary AS salary, CONCAT(m.first_name, " ", m.last_name) AS m_name
@@ -44,7 +45,13 @@ FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id;
 
 
 -- Get employees that are managers
-SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE m.m_name is not null;
+SELECT DISTINCT CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS m RIGHT JOIN employee AS e ON m.id = e.manager_id WHERE CONCAT(m.first_name, ' ', m.last_name) is not null;
+
+
+-- update employees manager
+SELECT * FROM employee;
+UPDATE employee AS e, employee AS m SET e.manager_id = m.id WHERE CONCAT(e.first_name, ' ', e.last_name) = "John Doe" AND CONCAT(m.first_name, ' ', m.last_name) = "John Marston";
+SELECT * FROM employee;
 
 -- Add department
 
