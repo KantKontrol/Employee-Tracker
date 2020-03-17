@@ -16,7 +16,7 @@ startQuestions = () => {
 
     let connection = setDBConnection();
 
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Add Employee", "Update Employee Role", "Update Employee Managers"];
+    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Add Employee", "Add Role", "Update Employee Role", "Update Employee Managers"];
 
     inquirer.prompt(
         {
@@ -47,6 +47,9 @@ handleSelection = (userChoice, connection) => {
             break;
         case "Add Employee":
             addEmployee(connection);
+            break;
+        case "Add Role":
+            addRole(connection);
             break;
         case "Update Employee Role":
             updateEmployeeRole(connection);
@@ -151,7 +154,6 @@ addEmployee = (connection) => {
 
                             console.log("Employee Added!");
                             viewAllEmployees(connection);
-
                         });
                         
                     });
@@ -159,6 +161,36 @@ addEmployee = (connection) => {
             });
         });
     });
+}
+
+addRole = () => {
+
+    let newRole = {};
+
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the title of the role?",
+            name: "roleTitle"
+        },
+        {
+            type: "input",
+            message: "What is the salary of the role?",
+            name: "roleSalary"
+        }
+    ]).then(res => {
+
+        newRole.title = res.roleTitle;
+        newRole.salary = res.roleSalary;
+
+        connection.query("SELECT d.title AS d_title, d.id AS d_id FROM departmant AS d", (err, res) => {
+            if(err)throw err;
+
+            
+        })
+
+    })
+
 }
 
 updateEmployeeManager = (connection) => {
