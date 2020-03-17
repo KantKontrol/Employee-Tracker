@@ -186,11 +186,24 @@ addRole = (connection) => {
         connection.query("SELECT d.name AS d_title, d.id AS d_id FROM department AS d", (err, res) => {
             if(err)throw err;
 
-            console.log(res);
+            let d_list = [];
 
-        })
+            res.forEach(e => d_list.push({value: e.d_id, name: e.d_title}));
 
-    })
+            inquirer.prompt({
+                type: "list",
+                choices: d_list,
+                message: "Which department is this role apart of?",
+                name: "departmentId"
+            }).then(res => {
+
+                console.log(res);
+
+            });
+
+        });
+
+    });
 
 }
 
