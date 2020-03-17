@@ -139,7 +139,20 @@ addEmployee = (connection) => {
                             }
                         }
 
-                        console.log(newEmployeeInfo);
+                        connection.query("INSERT INTO employee SET ?",[
+                            {
+                                first_name: newEmployeeInfo.firstName,
+                                last_name: newEmployeeInfo.lastName,
+                                role_id: newEmployeeInfo.role.id,
+                                manager_id: newEmployeeInfo.manager_id
+                            }
+                        ], (err,res) => {
+                            if(err)throw err;
+
+                            console.log("Employee Added!");
+                            viewAllEmployees(connection);
+
+                        });
                         
                     });
                 });
