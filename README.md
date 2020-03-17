@@ -30,7 +30,7 @@ Design the following database schema containing three tables:
   
 Build a command-line application that at a minimum allows the user to:
 
-  * Add departments, roles
+  * Add departments
 
 Bonus points if you're able to:
 

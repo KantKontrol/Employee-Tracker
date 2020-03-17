@@ -17,7 +17,7 @@ startQuestions = () => {
     let connection = setDBConnection();
     
 
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "View Roles", "View Departments", "Add Employee", "Add Role", "Update Employee Role", "Update Employee Managers"];
+    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "View Roles", "View Departments", "Add Employee", "Add Role", "Add Department", "Update Employee Role", "Update Employee Managers"];
 
     inquirer.prompt(
         {
@@ -57,6 +57,9 @@ handleSelection = (userChoice, connection) => {
             break;
         case "Add Role":
             addRole(connection);
+            break;
+        case "Add Department":
+            addDepartment(connection);
             break;
         case "Update Employee Role":
             updateEmployeeRole(connection);
@@ -225,7 +228,7 @@ addRole = (connection) => {
                     if(err)throw err;
 
                     console.log("Success!");
-
+                    viewRoles(connection);
                 });
 
             });
@@ -234,6 +237,27 @@ addRole = (connection) => {
 
     });
 
+}
+
+addDepartment = (connection) => {
+    inquirer.prompt({
+        type: "input",
+        message: "What is the name of the department?",
+        name: "departmentName"
+    }).then(res => {
+
+        connection.query("INSERT INTO department SET ?", [
+            {
+                name: res.departmentName
+            }
+        ], (err,res) => {
+            if(err)throw err;
+
+            console.log("success!");
+            viewDepartments(connection);
+        });
+
+    });
 }
 
 updateEmployeeManager = (connection) => {
