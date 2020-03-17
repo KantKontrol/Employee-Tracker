@@ -16,7 +16,7 @@ startQuestions = () => {
 
     let connection = setDBConnection();
 
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Update Employee Role", "Update Employee Managers"];
+    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Add Employee", "Update Employee Role", "Update Employee Managers"];
 
     inquirer.prompt(
         {
@@ -45,6 +45,9 @@ handleSelection = (userChoice, connection) => {
         case "View All Employees by Manager":
             viewEmployeeByManager(connection);
             break;
+        case "Add Employee":
+            addEmployee(connection);
+            break;
         case "Update Employee Role":
             updateEmployeeRole(connection);
             break;
@@ -71,6 +74,30 @@ viewEmployeeByManager = (connection) => {
 
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id";
     handleGetConnection(connection, query);
+}
+
+addEmployee = (connection) => {
+
+    let newEmployeeInfo = {};
+
+
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the employees First name?",
+            name: "firstName"
+        },
+        {
+            type: "input",
+            message: "What is the employees Last name?",
+            name: "lastName"
+        }
+    ]).then(res => {
+
+        newEmployeeInfo.firstName = res.firstName;
+        newEmployeeInfo.lastName = res.lastName;
+
+    });
 }
 
 updateEmployeeManager = (connection) => {
