@@ -197,7 +197,18 @@ addRole = (connection) => {
                 name: "departmentId"
             }).then(res => {
 
-                console.log(res);
+                connection.query("INSERT INTO role SET ?", [
+                    {
+                        title: newRole.title,
+                        salary: newRole.salary,
+                        department_id: res.departmentId
+                    }
+                ], (err, res) => {
+                    if(err)throw err;
+
+                    console.log("Success!");
+
+                });
 
             });
 
