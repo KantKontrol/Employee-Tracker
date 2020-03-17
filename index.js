@@ -16,7 +16,7 @@ startQuestions = () => {
 
     let connection = setDBConnection();
 
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Update Employee Managers"];
+    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Update Employee Role", "Update Employee Managers"];
 
     inquirer.prompt(
         {
@@ -44,6 +44,9 @@ handleSelection = (userChoice, connection) => {
             break;
         case "View All Employees by Manager":
             viewEmployeeByManager(connection);
+            break;
+        case "Update Employee Role":
+            updateEmployeeRole(connection);
             break;
         case "Update Employee Managers":
             updateEmployeeManager(connection);
@@ -125,6 +128,10 @@ updateEmployeeManager = (connection) => {
         });
 
     });
+}
+
+updateEmployeeRole = (connection) => {
+    
 }
 
 handleGetConnection = (connection, query) => {
