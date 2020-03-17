@@ -97,6 +97,54 @@ addEmployee = (connection) => {
         newEmployeeInfo.firstName = res.firstName;
         newEmployeeInfo.lastName = res.lastName;
 
+        connection.query("SELECT r.id AS r_id, r.title AS r_title FROM role AS r", (err, res) => {
+            if(err)throw err;
+
+            let role_list = [];
+
+            res.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
+
+            inquirer.prompt({
+                type: "list",
+                choices: role_list,
+                message: "What is the employees role?",
+                name: "newRole"
+            }).then(res => {
+
+                for(let i=0;i<role_list.length;i++){
+                    if(role_list[i].name == res.newRole){
+                        newEmployeeInfo.role = role_list[i];
+                        break;
+                    }
+                }
+
+                connection.query(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}'`, (err,res) => {
+                    if(err) throw err;
+
+                    let m_list = [];
+
+                    res.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
+
+                    inquirer.prompt({
+                        type: "list",
+                        choices: m_list,
+                        message: "Which manager would you like to assign them to?",
+                        name: "new_manager"
+                    }).then(res => {
+
+                        for(let i=0;i<m_list.length;i++){
+                            if(m_list[i].name == res.new_manager){
+                                newEmployeeInfo.manager_id = m_list[i].id;
+                                break;
+                            }
+                        }
+
+                        console.log(newEmployeeInfo);
+                        
+                    });
+                });
+            });
+        });
     });
 }
 
@@ -120,7 +168,7 @@ updateEmployeeManager = (connection) => {
         }).then(res => {
 
             employeeToChange = res.selected_employee;
-            //change this to get manager by there title
+
             connection.query(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}' `, (err, res) => {
                 if(err) throw err;
 
