@@ -131,7 +131,50 @@ updateEmployeeManager = (connection) => {
 }
 
 updateEmployeeRole = (connection) => {
-    
+
+    connection.query("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name FROM employee AS e", (err, res) => {
+        if(err)throw err;
+
+        let e_list = [];
+
+        res.forEach(e => e_list.push(e.e_name));
+
+        inquirer.prompt({
+            type: "list",
+            choices: e_list,
+            message: "Which employee' role would you like to change?",
+            name: "employeeToChange"
+        }).then(res => {
+
+            let employeeToChange = res.employeeToChange;
+
+            connection.query("SELECT r.title AS r_title, r.id AS r_id FROM role AS r", (err, res) => {
+                if(err)throw err;
+
+                let role_list = [];
+                res.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
+
+                inquirer.prompt({
+                    type: "list",
+                    choices: role_list,
+                    message: "What is there new role?",
+                    name: "newRole"
+                }).then(res => {
+
+                    role_list.forEach(e => {
+                        if(e.name == res.newRole){
+                            connection.query(`UPDATE employee AS e SET e.role_id = '${e.id}' WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}'`, (err, res) => {
+                                if(err)throw err;
+                                console.log("Role Updated!");
+                                viewAllEmployees(connection);
+                            });
+                        }
+                    });
+                });
+            });
+        });
+    });
+
 }
 
 handleGetConnection = (connection, query) => {
