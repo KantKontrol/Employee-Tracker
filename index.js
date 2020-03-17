@@ -163,7 +163,7 @@ addEmployee = (connection) => {
     });
 }
 
-addRole = () => {
+addRole = (connection) => {
 
     let newRole = {};
 
@@ -183,10 +183,11 @@ addRole = () => {
         newRole.title = res.roleTitle;
         newRole.salary = res.roleSalary;
 
-        connection.query("SELECT d.title AS d_title, d.id AS d_id FROM departmant AS d", (err, res) => {
+        connection.query("SELECT d.name AS d_title, d.id AS d_id FROM department AS d", (err, res) => {
             if(err)throw err;
 
-            
+            console.log(res);
+
         })
 
     })
