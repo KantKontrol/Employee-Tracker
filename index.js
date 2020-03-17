@@ -15,8 +15,9 @@ setDBConnection = () => {
 startQuestions = () => {
 
     let connection = setDBConnection();
+    
 
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "Add Employee", "Add Role", "Update Employee Role", "Update Employee Managers"];
+    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "View Roles", "Add Employee", "Add Role", "Update Employee Role", "Update Employee Managers"];
 
     inquirer.prompt(
         {
@@ -44,6 +45,9 @@ handleSelection = (userChoice, connection) => {
             break;
         case "View All Employees by Manager":
             viewEmployeeByManager(connection);
+            break;
+        case "View Roles":
+            viewRoles(connection);
             break;
         case "Add Employee":
             addEmployee(connection);
@@ -78,6 +82,12 @@ viewEmployeeByManager = (connection) => {
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id";
     handleGetConnection(connection, query);
 }
+
+viewRoles = (connection) => {
+    let query = "SELECT * FROM role";
+    handleGetConnection(connection, query);
+}
+
 
 addEmployee = (connection) => {
 
@@ -338,6 +348,7 @@ restartQuestions = (connection) =>{
 }
 
 init = () => {
+    
     startQuestions();
 
 }
