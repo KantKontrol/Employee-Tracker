@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+const figlet = require("figlet");
 
 setDBConnection = () => {
     return mysql.createConnection({
@@ -380,6 +381,8 @@ restartQuestions = (connection) =>{
 }
 
 init = () => {
+
+    console.log(figlet.textSync("Employee Tracker"));
     
     startQuestions();
 
