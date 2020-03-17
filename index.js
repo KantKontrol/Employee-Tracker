@@ -78,6 +78,24 @@ viewAllEmployees = (connection) => {
     handleGetConnection(connection, query);
 }
 
+getAllEmployees = async (connection) => {
+
+    return new Promise((resolve, reject) => {
+
+        let query = "SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e";
+
+        connection.query(query, (err,res)=> {
+            if(err){
+                reject(err);
+            }
+            else{
+                resolve(res);
+            }
+        });
+    });
+}
+
+
 viewEmployeeByDepartment = (connection) => {
 
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, d.name AS department FROM employee AS e INNER JOIN role AS r ON e.role_id = r.id INNER JOIN department AS d ON r.department_id = d.id";
@@ -318,11 +336,12 @@ updateEmployeeManager = (connection) => {
     });
 }
 
-updateEmployeeRole = (connection) => {
+updateEmployeeRole = async (connection) => {
 
-    connection.query("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name FROM employee AS e", (err, res) => {
-        if(err)throw err;
+        let res = await getAllEmployees(connection);
 
+        console.log(res);
+        
         let e_list = [];
 
         res.forEach(e => e_list.push(e.e_name));
@@ -361,8 +380,6 @@ updateEmployeeRole = (connection) => {
                 });
             });
         });
-    });
-
 }
 
 handleGetConnection = (connection, query) => {
