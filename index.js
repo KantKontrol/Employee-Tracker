@@ -23,21 +23,21 @@ startQuestions = async () => {
 
     let res = await showChoicePrompt(operationChoices);
 
-    switch(res.userChoice){
+    switch(res){
         case "VIEW":
-            res = await showChoicePrompt(viewChoices);
+            res = await showChoicePrompt(viewChoices, "What would you like to do?");
             break;
         case "ADD":
-            res = await showChoicePrompt(addChoices);
+            res = await showChoicePrompt(addChoices, "What would you like to do?");
             break;
         case "UPDATE":
-            res = await showChoicePrompt(updateChoices);
+            res = await showChoicePrompt(updateChoices, "What would you like to do?");
             break;
         default:
             startQuestions();
     }
 
-    handleSelection(res.userChoice, connection);
+    handleSelection(res, connection);
 }
 
 handleSelection = (userChoice, connection) => {
@@ -83,16 +83,16 @@ viewAllEmployees = (connection) => {
     handleGetConnection(connection, query);
 }
 
-showChoicePrompt = (choices) => {
+showChoicePrompt = (choices, message) => {
     return new Promise((resolve, reject) => {
         inquirer.prompt({
             type: "list",
             choices: choices,
-            message: "What would you like to do?",
+            message: message,
             name: "userChoice"
         }).then(res => {
             if(res){
-                resolve(res);
+                resolve(res.userChoice);
             }
             else{
                 reject("Failed to retrieve question data");
@@ -162,39 +162,29 @@ addEmployee = (connection) => {
 
             response.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
 
-            inquirer.prompt({
-                type: "list",
-                choices: role_list,
-                message: "What is the employees role?",
-                name: "newRole"
-            }).then(async res => {
+            let newRole = await showChoicePrompt(role_list, "What is the employees role?");
 
-                for(let i=0;i<role_list.length;i++){
-                    if(role_list[i].name == res.newRole){
-                        newEmployeeInfo.role = role_list[i];
-                        break;
-                    }
+            for(let i=0;i<role_list.length;i++){
+                if(role_list[i].name == newRole){
+                    newEmployeeInfo.role = role_list[i];
+                    break;
                 }
+            }
 
-                let response = await getData(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}'`,connection);
+                let managers = await getData(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}'`,connection);
          
                 let m_list = [];
 
-                response.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
+                managers.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
 
-                    inquirer.prompt({
-                        type: "list",
-                        choices: m_list,
-                        message: "Which manager would you like to assign them to?",
-                        name: "new_manager"
-                    }).then(res => {
+                let new_manager = await showChoicePrompt(m_list, "Which manager would you like to assign them to?");
 
-                        for(let i=0;i<m_list.length;i++){
-                            if(m_list[i].name == res.new_manager){
-                                newEmployeeInfo.manager_id = m_list[i].id;
-                                break;
-                            }
-                        }
+                for(let i=0;i<m_list.length;i++){
+                    if(m_list[i].name == new_manager){
+                        newEmployeeInfo.manager_id = m_list[i].id;
+                        break;
+                    }
+                }
 
                         connection.query("INSERT INTO employee SET ?",[
                             {
@@ -211,9 +201,8 @@ addEmployee = (connection) => {
                         });
                         
                     });
-                });
-            });
-}
+    }
+  
 
 addRole = (connection) => {
 
