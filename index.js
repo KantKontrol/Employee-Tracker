@@ -339,8 +339,6 @@ updateEmployeeManager = (connection) => {
 updateEmployeeRole = async (connection) => {
 
         let res = await getAllEmployees(connection);
-
-        console.log(res);
         
         let e_list = [];
 
