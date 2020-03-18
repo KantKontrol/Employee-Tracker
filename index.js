@@ -281,45 +281,27 @@ updateEmployeeManager = async (connection) => {
 
         res.forEach(e => e_list.push({id: e.e_id, name: e.e_name}));
 
-        let employeeToChange = "";
+        let employeeToChange = await showChoicePrompt(e_list, "Which employee' manager would you like to change?");
 
-        inquirer.prompt({
-            type: "list",
-            choices: e_list,
-            message: "Which employee' manager would you like to change?",
-            name: "selected_employee"
-        }).then(async res => {
+        let response = await getData(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}' `,connection);
 
-            employeeToChange = res.selected_employee;
-
-            let response = await getData(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}' `,connection);
-
-            let m_list = [];
+        let m_list = [];
 
             response.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
 
-                inquirer.prompt({
-                    type: "list",
-                    choices: m_list,
-                    message: "Which manager would you like to assign them to?",
-                    name: "new_manager"
-                }).then(res => {
+            let new_manager = await showChoicePrompt(m_list, "Which manager would you like to assign them to?");
 
-                    let new_manager;
-                    
-                    m_list.forEach(e => {
-                        if(e.name == res.new_manager){
-                            new_manager = e;
-                        }
-                    });
+            m_list.forEach(e => {
+                if(e.name == new_manager){
+                    new_manager = e;
+                }
+            });
 
 
-                    connection.query(`UPDATE employee AS e, employee AS m SET e.manager_id = m.id WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}' AND CONCAT(m.first_name, ' ', m.last_name) = '${new_manager.name}'`, (err,res) => {
-                        if(err) throw err;
-                        console.log("Manager updated!");
-                        viewAllEmployees(connection);
-                    });
-                });
+            connection.query(`UPDATE employee AS e, employee AS m SET e.manager_id = m.id WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}' AND CONCAT(m.first_name, ' ', m.last_name) = '${new_manager.name}'`, (err,res) => {
+                if(err) throw err;
+                console.log("Manager updated!");
+                viewAllEmployees(connection);
             });
 }
 
