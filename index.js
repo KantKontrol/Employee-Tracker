@@ -230,27 +230,21 @@ addRole = (connection) => {
 
         response.forEach(e => d_list.push({value: e.d_id, name: e.d_title}));
 
-            inquirer.prompt({
-                type: "list",
-                choices: d_list,
-                message: "Which department is this role apart of?",
-                name: "departmentId"
-            }).then(res => {
+        let department_id = await showChoicePrompt(d_list, "Which department is this role apart of?");
 
-                connection.query("INSERT INTO role SET ?", [
-                    {
-                        title: newRole.title,
-                        salary: newRole.salary,
-                        department_id: res.departmentId
-                    }
-                ], (err, res) => {
-                    if(err)throw err;
+        connection.query("INSERT INTO role SET ?", [
+            {
+                title: newRole.title,
+                salary: newRole.salary,
+                department_id: departmentId
+            }
+        ], (err, res) => {
+            if(err)throw err;
 
-                    console.log("Success!");
-                    viewRoles(connection);
-                });
-            });
+            console.log("Success!");
+            viewRoles(connection);
         });
+    });
 }
 
 addDepartment = (connection) => {
@@ -313,38 +307,24 @@ updateEmployeeRole = async (connection) => {
 
         res.forEach(e => e_list.push(e.e_name));
 
-        inquirer.prompt({
-            type: "list",
-            choices: e_list,
-            message: "Which employee' role would you like to change?",
-            name: "employeeToChange"
-        }).then(async res => {
+        let employeeToChange = await showChoicePrompt(e_list, "Which employee' role would you like to change?");
 
-            let employeeToChange = res.employeeToChange;
+        let response = await getData("SELECT r.title AS r_title, r.id AS r_id FROM role AS r",connection);
 
-            let response = await getData("SELECT r.title AS r_title, r.id AS r_id FROM role AS r",connection);
+        let role_list = [];
+        response.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
 
-            let role_list = [];
-            response.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
+        let newRole = await showChoicePrompt(role_list, "What is there new role?");
 
-                inquirer.prompt({
-                    type: "list",
-                    choices: role_list,
-                    message: "What is there new role?",
-                    name: "newRole"
-                }).then(res => {
-
-                    role_list.forEach(e => {
-                        if(e.name == res.newRole){
-                            connection.query(`UPDATE employee AS e SET e.role_id = '${e.id}' WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}'`, (err, res) => {
-                                if(err)throw err;
-                                console.log("Role Updated!");
-                                viewAllEmployees(connection);
-                            });
-                        }
-                    });
+        role_list.forEach(e => {
+            if(e.name == newRole){
+                connection.query(`UPDATE employee AS e SET e.role_id = '${e.id}' WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}'`, (err, res) => {
+                    if(err)throw err;
+                    console.log("Role Updated!");
+                    viewAllEmployees(connection);
                 });
-            });
+            }
+        });
 }
 
 handleGetConnection = async (connection, query) => {
