@@ -12,25 +12,32 @@ setDBConnection = () => {
     });
 }
 
-startQuestions = () => {
+startQuestions = async () => {
 
     let connection = setDBConnection();
-    
-    let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "View Roles", "View Departments", "Add Employee", "Add Role", "Add Department", "Update Employee Role", "Update Employee Managers"];
 
-    inquirer.prompt(
-        {
-            type: "list",
-            choices: choices,
-            message: "What would you like to do?",
-            name: "userChoice"
-        }
-    ).then(res => {
+    let operationChoices = [ "VIEW", "ADD", "UPDATE"];
+    let viewChoices = ["View All Employees", "View All Employees by Department", "View All Employees by Manager", "View Roles", "View Departments"];
+    let addChoices = ["Add Employee", "Add Role", "Add Department"];
+    let updateChoices = ["Update Employee Role", "Update Employee Managers"];
 
-        handleSelection(res.userChoice, connection);
+    let res = await showChoicePrompt(operationChoices);
 
-    });
+    switch(res.userChoice){
+        case "VIEW":
+            res = await showChoicePrompt(viewChoices);
+            break;
+        case "ADD":
+            res = await showChoicePrompt(addChoices);
+            break;
+        case "UPDATE":
+            res = await showChoicePrompt(updateChoices);
+            break;
+        default:
+            startQuestions();
+    }
 
+    handleSelection(res.userChoice, connection);
 }
 
 handleSelection = (userChoice, connection) => {
@@ -76,6 +83,24 @@ viewAllEmployees = (connection) => {
     handleGetConnection(connection, query);
 }
 
+showChoicePrompt = (choices) => {
+    return new Promise((resolve, reject) => {
+        inquirer.prompt({
+            type: "list",
+            choices: choices,
+            message: "What would you like to do?",
+            name: "userChoice"
+        }).then(res => {
+            if(res){
+                resolve(res);
+            }
+            else{
+                reject("Failed to retrieve question data");
+            }
+        });
+    });
+}
+
 getData = async (query, connection) => {
 
     return new Promise((resolve, reject) => {
@@ -92,13 +117,11 @@ getData = async (query, connection) => {
 }
 
 viewEmployeeByDepartment = (connection) => {
-
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, d.name AS department FROM employee AS e INNER JOIN role AS r ON e.role_id = r.id INNER JOIN department AS d ON r.department_id = d.id";
     handleGetConnection(connection, query);
 }
 
 viewEmployeeByManager = (connection) => {
-
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, CONCAT(m.first_name, ' ', m.last_name) AS m_name FROM employee AS e INNER JOIN employee AS m ON e.manager_id = m.id";
     handleGetConnection(connection, query);
 }
