@@ -292,16 +292,15 @@ updateEmployeeManager = async (connection) => {
             choices: e_list,
             message: "Which employee' manager would you like to change?",
             name: "selected_employee"
-        }).then(res => {
+        }).then(async res => {
 
             employeeToChange = res.selected_employee;
 
-            connection.query(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}' `, (err, res) => {
-                if(err) throw err;
+            let response = await getData(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}' `,connection);
 
-                let m_list = [];
+            let m_list = [];
 
-                res.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
+            response.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
 
                 inquirer.prompt({
                     type: "list",
@@ -326,8 +325,6 @@ updateEmployeeManager = async (connection) => {
                     });
                 });
             });
-
-        });
 }
 
 updateEmployeeRole = async (connection) => {
@@ -343,15 +340,14 @@ updateEmployeeRole = async (connection) => {
             choices: e_list,
             message: "Which employee' role would you like to change?",
             name: "employeeToChange"
-        }).then(res => {
+        }).then(async res => {
 
             let employeeToChange = res.employeeToChange;
 
-            connection.query("SELECT r.title AS r_title, r.id AS r_id FROM role AS r", (err, res) => {
-                if(err)throw err;
+            let response = await getData("SELECT r.title AS r_title, r.id AS r_id FROM role AS r",connection);
 
-                let role_list = [];
-                res.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
+            let role_list = [];
+            response.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
 
                 inquirer.prompt({
                     type: "list",
@@ -371,7 +367,6 @@ updateEmployeeRole = async (connection) => {
                     });
                 });
             });
-        });
 }
 
 handleGetConnection = async (connection, query) => {
@@ -391,7 +386,6 @@ restartQuestions = (connection) =>{
 init = () => {
 
     console.log(figlet.textSync("Employee Tracker"));
-    
     startQuestions();
 }
 
