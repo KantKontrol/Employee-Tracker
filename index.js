@@ -78,7 +78,7 @@ viewAllEmployees = (connection) => {
     handleGetConnection(connection, query);
 }
 
-getAllEmployees = async (connection) => {
+getData = async (query, connection) => {
 
     return new Promise((resolve, reject) => {
 
@@ -279,10 +279,10 @@ addDepartment = (connection) => {
     });
 }
 
-updateEmployeeManager = (connection) => {
+updateEmployeeManager = async (connection) => {
 
-    connection.query("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e", (err, res) => {
-        if(err) throw err;
+
+        let res = await getData("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e", connection);
 
         let e_list = [];
 
@@ -332,13 +332,11 @@ updateEmployeeManager = (connection) => {
             });
 
         });
-
-    });
 }
 
 updateEmployeeRole = async (connection) => {
 
-        let res = await getAllEmployees(connection);
+        let res = await getData("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e", connection);
         
         let e_list = [];
 
