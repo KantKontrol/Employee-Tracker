@@ -374,7 +374,7 @@ updateEmployeeRole = async (connection) => {
         });
 }
 
-handleGetConnection = (connection, query) => {
+handleGetConnection = async (connection, query) => {
     
     let res = await getData(query, connection);
 
