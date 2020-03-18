@@ -214,17 +214,16 @@ addRole = (connection) => {
             message: "What is the salary of the role?",
             name: "roleSalary"
         }
-    ]).then(res => {
+    ]).then(async res => {
 
         newRole.title = res.roleTitle;
         newRole.salary = res.roleSalary;
 
-        connection.query("SELECT d.name AS d_title, d.id AS d_id FROM department AS d", (err, res) => {
-            if(err)throw err;
+        let response = await getData("SELECT d.name AS d_title, d.id AS d_id FROM department AS d",connection);
 
-            let d_list = [];
+        let d_list = [];
 
-            res.forEach(e => d_list.push({value: e.d_id, name: e.d_title}));
+        response.forEach(e => d_list.push({value: e.d_id, name: e.d_title}));
 
             inquirer.prompt({
                 type: "list",
@@ -245,13 +244,8 @@ addRole = (connection) => {
                     console.log("Success!");
                     viewRoles(connection);
                 });
-
             });
-
         });
-
-    });
-
 }
 
 addDepartment = (connection) => {
@@ -271,19 +265,16 @@ addDepartment = (connection) => {
             console.log("success!");
             viewDepartments(connection);
         });
-
     });
 }
 
 updateEmployeeManager = async (connection) => {
-
 
         let res = await getData("SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e", connection);
 
         let e_list = [];
 
         res.forEach(e => e_list.push({id: e.e_id, name: e.e_name}));
-
 
         let employeeToChange = "";
 
