@@ -82,8 +82,6 @@ getData = async (query, connection) => {
 
     return new Promise((resolve, reject) => {
 
-        let query = "SELECT CONCAT(e.first_name, ' ', e.last_name) AS e_name, e.id AS e_id FROM employee AS e";
-
         connection.query(query, (err,res)=> {
             if(err){
                 reject(err);
@@ -135,13 +133,12 @@ addEmployee = (connection) => {
             message: "What is the employees Last name?",
             name: "lastName"
         }
-    ]).then(res => {
+    ]).then(async res => {
 
         newEmployeeInfo.firstName = res.firstName;
         newEmployeeInfo.lastName = res.lastName;
 
-        connection.query("SELECT r.id AS r_id, r.title AS r_title FROM role AS r", (err, res) => {
-            if(err)throw err;
+            res = await getData("SELECT r.id AS r_id, r.title AS r_title FROM role AS r", connection);
 
             let role_list = [];
 
@@ -200,7 +197,6 @@ addEmployee = (connection) => {
                 });
             });
         });
-    });
 }
 
 addRole = (connection) => {
@@ -379,13 +375,12 @@ updateEmployeeRole = async (connection) => {
 }
 
 handleGetConnection = (connection, query) => {
-    connection.query(query, (err, res) => {
-        if(err) throw err;
+    
+    let res = await getData(query, connection);
 
-        console.table(res);
+    console.table(res);
 
-        restartQuestions(connection);
-    });
+    restartQuestions(connection);
 }
 
 restartQuestions = (connection) =>{
@@ -398,7 +393,6 @@ init = () => {
     console.log(figlet.textSync("Employee Tracker"));
     
     startQuestions();
-
 }
 
 init();
