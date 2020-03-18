@@ -12,12 +12,10 @@ setDBConnection = () => {
     });
 }
 
-
 startQuestions = () => {
 
     let connection = setDBConnection();
     
-
     let choices = [ "View All Employees", "View All Employees by Department", "View All Employees by Manager", "View Roles", "View Departments", "Add Employee", "Add Role", "Add Department", "Update Employee Role", "Update Employee Managers"];
 
     inquirer.prompt(
@@ -93,7 +91,6 @@ getData = async (query, connection) => {
     });
 }
 
-
 viewEmployeeByDepartment = (connection) => {
 
     let query = "SELECT e.id AS e_id, CONCAT(e.first_name, ' ', e.last_name) AS e_name, d.name AS department FROM employee AS e INNER JOIN role AS r ON e.role_id = r.id INNER JOIN department AS d ON r.department_id = d.id";
@@ -116,11 +113,9 @@ viewDepartments = (connection) => {
     handleGetConnection(connection, query);
 }
 
-
 addEmployee = (connection) => {
 
     let newEmployeeInfo = {};
-
 
     inquirer.prompt([
         {
@@ -138,18 +133,18 @@ addEmployee = (connection) => {
         newEmployeeInfo.firstName = res.firstName;
         newEmployeeInfo.lastName = res.lastName;
 
-            res = await getData("SELECT r.id AS r_id, r.title AS r_title FROM role AS r", connection);
+            let response = await getData("SELECT r.id AS r_id, r.title AS r_title FROM role AS r", connection);
 
             let role_list = [];
 
-            res.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
+            response.forEach(e => role_list.push({id: e.r_id, name: e.r_title}));
 
             inquirer.prompt({
                 type: "list",
                 choices: role_list,
                 message: "What is the employees role?",
                 name: "newRole"
-            }).then(res => {
+            }).then(async res => {
 
                 for(let i=0;i<role_list.length;i++){
                     if(role_list[i].name == res.newRole){
@@ -158,12 +153,11 @@ addEmployee = (connection) => {
                     }
                 }
 
-                connection.query(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}'`, (err,res) => {
-                    if(err) throw err;
+                let response = await getData(`SELECT CONCAT(m.first_name, ' ', m.last_name) AS m_name, m.id AS m_id FROM employee AS m LEFT JOIN role ON role.id = m.role_id WHERE role.title = '${'General Manager'}'`,connection);
+         
+                let m_list = [];
 
-                    let m_list = [];
-
-                    res.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
+                response.forEach(e => m_list.push({id: e.m_id, name: e.m_name}));
 
                     inquirer.prompt({
                         type: "list",
@@ -196,7 +190,6 @@ addEmployee = (connection) => {
                     });
                 });
             });
-        });
 }
 
 addRole = (connection) => {
