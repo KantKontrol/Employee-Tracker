@@ -186,22 +186,22 @@ addEmployee = (connection) => {
                     }
                 }
 
-                        connection.query("INSERT INTO employee SET ?",[
-                            {
-                                first_name: newEmployeeInfo.firstName,
-                                last_name: newEmployeeInfo.lastName,
-                                role_id: newEmployeeInfo.role.id,
-                                manager_id: newEmployeeInfo.manager_id
-                            }
-                        ], (err,res) => {
-                            if(err)throw err;
+                    connection.query("INSERT INTO employee SET ?",[
+                        {
+                            first_name: newEmployeeInfo.firstName,
+                            last_name: newEmployeeInfo.lastName,
+                            role_id: newEmployeeInfo.role.id,
+                            manager_id: newEmployeeInfo.manager_id
+                        }
+                    ], (err,res) => {
+                        if(err)throw err;
 
-                            console.log("Employee Added!");
-                            viewAllEmployees(connection);
-                        });
-                        
+                        console.log("Employee Added!");
+                        viewAllEmployees(connection);
                     });
-    }
+                    
+                });
+}
   
 
 addRole = (connection) => {
@@ -230,7 +230,7 @@ addRole = (connection) => {
 
         response.forEach(e => d_list.push({value: e.d_id, name: e.d_title}));
 
-        let department_id = await showChoicePrompt(d_list, "Which department is this role apart of?");
+        let departmentId = await showChoicePrompt(d_list, "Which department is this role apart of?");
 
         connection.query("INSERT INTO role SET ?", [
             {
@@ -290,7 +290,6 @@ updateEmployeeManager = async (connection) => {
                     new_manager = e;
                 }
             });
-
 
             connection.query(`UPDATE employee AS e, employee AS m SET e.manager_id = m.id WHERE CONCAT(e.first_name, ' ', e.last_name) = '${employeeToChange}' AND CONCAT(m.first_name, ' ', m.last_name) = '${new_manager.name}'`, (err,res) => {
                 if(err) throw err;
